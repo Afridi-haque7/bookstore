@@ -1,6 +1,10 @@
+import { createContext, useContext } from "react";
 import { initializeApp } from "firebase/app";
 
-// Your web app's Firebase configuration
+
+
+const FirebaseContext = createContext(null);
+
 const firebaseConfig = {
   apiKey: "AIzaSyBnf0eH4l5ueCsyakn90juGGcmHRbQrCWg",
   authDomain: "react-bookstore-a8ceb.firebaseapp.com",
@@ -11,5 +15,16 @@ const firebaseConfig = {
   databaseURL: "https://react-bookstore-a8ceb-default-rtdb.firebaseio.com",
 };
 
+export const useFirebase = () => useContext(FirebaseContext);
+
 // Initialize Firebase
-export const app = initializeApp(firebaseConfig);
+const firebaseApp = initializeApp(firebaseConfig);
+
+
+export const FirebaseProvider = (props) => {
+    return (
+        <FirebaseContext.Provider>
+            { props.children }
+        </FirebaseContext.Provider>
+    )
+};

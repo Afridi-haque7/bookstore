@@ -36,7 +36,7 @@ const SignupPage = () => {
           required
           name="password"
         />
-        <button onClick={createUser}>Signup</button>
+        <button onClick={createUser}>Sign Up</button>
       </form>
     </div>
   );
