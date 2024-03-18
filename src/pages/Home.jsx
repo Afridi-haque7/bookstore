@@ -1,22 +1,28 @@
 import { useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
-import React, {useEffect} from "react";
-import NavbarComponent from "../components/Navbar";
+import React, {useEffect, useState} from "react";
+import { useFirebase } from "../context/Firebase";
+import Card from "../components/Card";
+import CardGroup from 'react-bootstrap/CardGroup';
+
 
 const HomePage = () => {
-    const navigate = useNavigate();
+    const [books, setBooks] = useState([]);
 
-    const handleRegister = () => {
-      navigate("/register");
-    };
+    const firebase = useFirebase();
+    useEffect(() => {
+      firebase.listAllBooks().then((books) => setBooks(books.docs));
+    }, []);
 
 
 
   return (
     <div className="container">
-        {/* <NavbarComponent /> */}
-      <h1>Home Page</h1>
-      <Button variant="primary" onClick={handleRegister}>Register</Button>
+      <CardGroup>
+        {books.map((book) => (
+          <Card key={book.id} {...book.data()} />
+        ))}
+      </CardGroup>
     </div>
   );
 };

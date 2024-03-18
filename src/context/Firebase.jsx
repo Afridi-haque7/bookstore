@@ -1,20 +1,16 @@
 import React, { useState } from "react";
 import { createContext, useContext, useEffect } from "react";
 import { initializeApp } from "firebase/app";
-import { 
-    signInWithEmailAndPassword, 
-    createUserWithEmailAndPassword, 
-    getAuth, 
-    GoogleAuthProvider, 
-    signInWithPopup,
-    onAuthStateChanged 
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  onAuthStateChanged,
 } from "firebase/auth";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
-
-
-
-
+import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const FirebaseContext = createContext(null);
 
@@ -37,47 +33,53 @@ const googleProvider = new GoogleAuthProvider();
 const firestore = getFirestore(firebaseApp);
 const storage = getStorage(firebaseApp);
 
-
 export const FirebaseProvider = (props) => {
-
-    const [user, setUser] = useState(null);
-    useEffect(() => {
-        onAuthStateChanged(firebaseAuth, (user) => {
-            if(user) setUser(user);
-            else    setUser(null);
-        });
-    }, []);
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    onAuthStateChanged(firebaseAuth, (user) => {
+      if (user) setUser(user);
+      else setUser(null);
+    });
+  }, []);
 
   const signupUserWithEmailAndPassword = (email, password) =>
-    createUserWithEmailAndPassword(firebaseAuth, email, password).then((value) =>
+    createUserWithEmailAndPassword(firebaseAuth, email, password).then(
+      (value) => console.log(value)
+    );
+
+  const loginWithEmailAndPassword = (email, password) =>
+    signInWithEmailAndPassword(firebaseAuth, email, password).then((value) =>
       console.log(value)
     );
 
-    const loginWithEmailAndPassword = (email, password) =>
-      signInWithEmailAndPassword(firebaseAuth, email, password).then((value) => 
-      console.log(value)
-    );
+  const signinWithGoogle = () => {
+    signInWithPopup(firebaseAuth, googleProvider);
+  };
 
-    const signinWithGoogle = () => {
-        signInWithPopup(firebaseAuth, googleProvider);
-    }
+  const handleCreateNewListing = async (name, isbn, price, cover) => {
+    const imageRef = ref(storage, `uploads/images/${Date.now()}-${cover.name}`);
+    const uploadResult = await uploadBytes(imageRef, cover);
+    return await addDoc(collection(firestore, "books"), {
+      name,
+      isbn,
+      price,
+      imageURL: uploadResult.ref.fullPath,
+      userID: user.uid,
+      userEmail: user.email,
+      displayName: user.displayName,
+      photoURL: user.photoURL,
+    });
+  };
 
-    const handleCreateNewListing = async (name, isbn, price, cover) => {
-      const imageRef = ref(storage, `uploads/images/${Date.now()}-${cover.name}`);
-      const uploadResult = await uploadBytes(imageRef, cover);
-      return await addDoc(collection(firestore, 'books'), {
-        name,
-        isbn,
-        price,
-        imageURL: uploadResult.ref.fullPath,
-        userID: user.uid,
-        userEmail: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-      });
-    };
+  const listAllBooks = () => {
+    return getDocs(collection(firestore, "books"));
+  };
 
-    const isLoggedIn = user ? true : false;
+  const getImageURL = (path) => {
+    return getDownloadURL(ref(storage, path));
+  };
+
+  const isLoggedIn = user ? true : false;
 
   return (
     <FirebaseContext.Provider
@@ -87,6 +89,8 @@ export const FirebaseProvider = (props) => {
         signinWithGoogle,
         isLoggedIn,
         handleCreateNewListing,
+        listAllBooks,
+        getImageURL,
       }}
     >
       {props.children}
