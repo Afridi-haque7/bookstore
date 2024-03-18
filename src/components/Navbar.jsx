@@ -1,0 +1,24 @@
+import React from "react";
+import Container from "react-bootstrap/Container";
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
+import { NavLink } from "react-router-dom"
+
+const NavbarComponent = () => {
+  return (
+    <div>
+      <Navbar bg="dark" data-bs-theme="dark">
+        <Container>
+          <Navbar.Brand href="/">Bookify</Navbar.Brand>
+          <Nav className="me-auto">
+            <Nav.Link href="/">Home</Nav.Link>
+            <Nav.Link href="#features">Features</Nav.Link>
+            <Nav.Link href="/book/list">Add Listing</Nav.Link>
+          </Nav>
+        </Container>
+      </Navbar>
+    </div>
+  );
+};
+
+export default NavbarComponent;

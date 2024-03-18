@@ -10,12 +10,15 @@ const RegisterPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  useEffect(() => {
-    if (firebase.isLoggedIn) {
-      // navigate to home page
-      navigate("/");
-    }
-  }, [firebase, navigate]);
+  const goHome = useEffect(() => {
+    navigate("/");
+  });
+  // useEffect(() => {
+  //   if (firebase.isLoggedIn) {
+  //     // navigate to home page
+  //     navigate("/");
+  //   }
+  // }, [firebase, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,6 +27,7 @@ const RegisterPage = () => {
       .signupUserWithEmailAndPassword(email, password)
       .then(() => {
         alert("Signup Successfull");
+        goHome();
       });
     console.log("Successfull", result);
   };
