@@ -12,8 +12,8 @@ const NavbarComponent = () => {
           <Navbar.Brand href="/">Bookify</Navbar.Brand>
           <Nav className="me-auto">
             <Nav.Link href="/">Home</Nav.Link>
-            <Nav.Link href="#features">Features</Nav.Link>
             <Nav.Link href="/book/list">Add Listing</Nav.Link>
+            <Nav.Link href="/book/order">Orders</Nav.Link>
           </Nav>
         </Container>
       </Navbar>

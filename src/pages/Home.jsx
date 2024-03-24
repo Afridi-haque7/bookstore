@@ -20,7 +20,7 @@ const HomePage = () => {
     <div className="container">
       <CardGroup>
         {books.map((book) => (
-          <Card key={book.id} {...book.data()} />
+          <Card key={book.id} id={book.id} {...book.data()} />
         ))}
       </CardGroup>
     </div>
